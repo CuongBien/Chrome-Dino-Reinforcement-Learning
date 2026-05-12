@@ -29,6 +29,7 @@ class SimpleDinoEnv(gym.Env):
         
         self.window = None
         self.clock = None
+        self.closed = False
 
     def reset(self, seed=None, options=None):
         """Hàm này chạy mỗi khi game bắt đầu lại (khi thua)"""
@@ -90,6 +91,10 @@ class SimpleDinoEnv(gym.Env):
             pygame.display.set_caption("AI Dino Game")
             self.clock = pygame.time.Clock()
 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.closed = True
+
         self.window.fill((255, 255, 255)) # Nền trắng
 
         # Vẽ mặt đất
@@ -102,4 +107,11 @@ class SimpleDinoEnv(gym.Env):
         pygame.draw.rect(self.window, (200, 0, 0), (self.obs_x, self.dino_y_ground, self.obs_size, self.obs_size))
 
         pygame.display.flip()
-        self.clock.tick(30) # Chạy ở 30 FPS
+        self.clock.tick(30)
+
+    def close(self):
+        if self.window is not None:
+            pygame.display.quit()
+            pygame.quit()
+            self.window = None
+            self.clock = None
